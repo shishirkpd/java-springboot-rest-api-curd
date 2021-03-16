@@ -9,7 +9,6 @@ We have following REST api options:
 2. GET Product by Id: /product/{id} -- need to pass UUID
 3. POST Create Product: /product -- need to pass the body as 
       {
-          "id": "",
           "name": "p1",
           "price": 123.00
       }
