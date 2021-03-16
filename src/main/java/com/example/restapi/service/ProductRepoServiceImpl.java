@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 @Service
 public class ProductRepoServiceImpl implements ProductRepoService{
@@ -17,30 +19,31 @@ public class ProductRepoServiceImpl implements ProductRepoService{
     }
 
     @Override
-    public Product getProductBy(UUID id) {
-        return repo.stream().filter(x -> x.getId().equals(id)).findAny().orElse(null);
+    public Optional<Product> getProductBy(UUID id) {
+        Predicate<Product> uuidPredicateFunction = x -> x.getId().equals(id);
+        return repo.stream().filter(uuidPredicateFunction).findAny();
     }
 
     @Override
-    public UUID addProduct(Product product) {
+    public Optional<Product> addProduct(Product product) {
         Product np = new Product(product.getName(), product.getPrice());
         repo.add(np);
-        return np.getId();
+        return getProductBy(np.getId());
+    }
+
+    public boolean deleteProductBy(Product product) {
+         return repo.remove(product);
     }
 
     @Override
-    public UUID deleteProductById(UUID id) {
-        Product product = getProductBy(id);
-        repo.remove(product);
-       return getProductBy(id).getId();
-    }
-
-    @Override
-    public Product updateProduct(Product product) {
-        Product prod = getProductBy(product.getId());
-        prod.setName(product.getName());
-        prod.setPrice(product.getPrice());
-        repo.add(prod);
+    public Optional<Product> updateProduct(Product product) {
+        Optional<Product> prd = getProductBy(product.getId());
+        prd.map(prod -> {
+            prod.setName(product.getName());
+            prod.setPrice(product.getPrice());
+            repo.add(prod);
+            return true;
+        }).orElse(repo.add(product));
         return getProductBy(product.getId());
     }
 }

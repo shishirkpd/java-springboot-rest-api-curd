@@ -3,14 +3,15 @@ package com.example.restapi.service;
 import com.example.restapi.model.Product;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface ProductRepoService {
     List<Product> getAllProducts();
-    Product getProductBy(UUID id);
-    UUID addProduct(Product product);
+    Optional<Product> getProductBy(UUID id);
+    Optional<Product> addProduct(Product product);
 
-    UUID deleteProductById(UUID id);
+    boolean deleteProductBy(Product product);
 
-    Product updateProduct(Product product);
+    Optional<Product> updateProduct(Product product);
 }
